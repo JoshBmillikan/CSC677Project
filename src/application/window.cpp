@@ -106,6 +106,7 @@ void Window::capturePacketButtonClicked()
         QMessageBox::information(this, tr("CSC 677 project"), tr("Please select an interface"));
 }
 
+/// Returns string representation of the protocol number
 static QString getProtocolString(const uint8_t protocol)
 {
     switch (protocol) {
@@ -125,6 +126,8 @@ void Window::packetSelected(const int index)
         return;
     auto& [packet, timestamp] = packets.at(index);
     const auto header = reinterpret_cast<ip*>(packet.data() + IP_HEADER_OFFSET);
+
+    //display header fields
     ui->ipLabel->setText(QString::number(header->ip_v));
     ui->destinationLabel->setText(getIpString(&header->ip_dst.s_addr));
     ui->sourceLabel->setText(getIpString(&header->ip_src.s_addr));
@@ -143,6 +146,7 @@ void Window::packetSelected(const int index)
         flags += " MF";
     ui->flagsLabel->setText(flags);
 
+    // Display packet bytes in hex
     int i = 0;
     const auto table = ui->packetTable;
     table->setRowCount(0);
