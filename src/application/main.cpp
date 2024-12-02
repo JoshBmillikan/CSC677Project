@@ -1,10 +1,12 @@
 #include <QApplication>
-#include <QPushButton>
+#include <pcap/pcap.h>
+
+#include "window.h"
 
 int main(int argc, char *argv[]) {
+    pcap_init(PCAP_CHAR_ENC_UTF_8, nullptr);
     QApplication a(argc, argv);
-    QPushButton button("Hello world!", nullptr);
-    button.resize(200, 100);
-    button.show();
+    Window w;
+    w.show();
     return QApplication::exec();
 }

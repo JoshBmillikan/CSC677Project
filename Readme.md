@@ -1,0 +1,1 @@
+uses Qt and libpcap-dev

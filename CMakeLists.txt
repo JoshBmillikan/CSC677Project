@@ -11,16 +11,24 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
+        Designer
         REQUIRED)
 
+add_subdirectory(external/libpcap EXCLUDE_FROM_ALL)
+
 add_executable(CSC677Project src/application/main.cpp
-        src/platform/platform.h
-        src/platform/linux.cpp)
+        src/application/packet.cpp
+        src/application/packet.h
+        src/application/window.cpp
+        src/application/window.h
+        src/application/window.ui)
 target_include_directories(CSC677Project PRIVATE src)
 
 target_link_libraries(CSC677Project
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        Qt::Designer
+        pcap
 )
 
