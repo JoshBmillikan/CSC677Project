@@ -12,4 +12,4 @@ The project is built with cmake
 
 https://cmake.org/cmake/help/latest/index.html
 
-Must be run with root permissions to capture packets, only linux is supported
+The executable must be run with root permissions to capture packets, only linux is supported
