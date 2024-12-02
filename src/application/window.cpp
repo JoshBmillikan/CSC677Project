@@ -7,10 +7,10 @@
 #include "window.h"
 
 #include <iostream>
+#include <net/ethernet.h>
 #include <netinet/ip.h>
 #include <pcap/pcap.h>
 #include <qmessagebox.h>
-#include <net/ethernet.h>
 #include "ui_window.h"
 
 Window::Window(QWidget* parent) : QWidget(parent), ui(new Ui::Window)
@@ -102,11 +102,27 @@ void Window::capturePacketButtonClicked()
     if (pcap) {
         const int count = ui->packetCountSpinBox->value();
         capturePackets(count);
+    } else
+        QMessageBox::information(this, tr("CSC 677 project"), tr("Please select an interface"));
+}
+
+static QString getProtocolString(const uint8_t protocol)
+{
+    switch (protocol) {
+        case IPPROTO_ICMP: return "ICMP";
+        case IPPROTO_IGMP: return "IGMP";
+        case IPPROTO_TCP: return "TCP";
+        case IPPROTO_UDP: return "UDP";
+        case IPPROTO_ENCAP: return "ENCAP";
+        case IPPROTO_SCTP: return "SCTP";
+        default: return "Unknown";
     }
 }
 
 void Window::packetSelected(const int index)
 {
+    if (index < 0)
+        return;
     auto& [packet, timestamp] = packets.at(index);
     const auto header = reinterpret_cast<ip*>(packet.data() + IP_HEADER_OFFSET);
     ui->ipLabel->setText(QString::number(header->ip_v));
@@ -115,10 +131,21 @@ void Window::packetSelected(const int index)
     ui->sizeLabel->setText(QString::number(packet.size()));
     ui->timestampLabel->setText(QString::fromStdString(ctime(&timestamp)));
     ui->headerLengthLabel->setText(QString::number(header->ip_hl * 4));
+    ui->idLabel->setText(QString::number(header->ip_id));
+    ui->fragmentLabel->setText(QString::number(header->ip_off & IP_OFFMASK));
+    ui->ttlLabel->setText(QString::number(header->ip_ttl));
+    ui->protocolLabel->setText(getProtocolString(header->ip_p));
+    ui->checksumLabel->setText(QString::number(header->ip_sum));
+    QString flags = "None Set";
+    if (header->ip_off & IP_DF)
+        flags = " DF";
+    if (header->ip_off & IP_MF)
+        flags += " MF";
+    ui->flagsLabel->setText(flags);
 
     int i = 0;
     const auto table = ui->packetTable;
-    table->clear();
+    table->setRowCount(0);
     table->insertRow(table->rowCount());
     table->setColumnCount(10);
     for (const uint8_t byte : packet) {
@@ -132,4 +159,6 @@ void Window::packetSelected(const int index)
             i = 0;
         }
     }
+    table->resizeColumnsToContents();
+    table->resizeRowsToContents();
 }

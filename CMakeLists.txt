@@ -17,8 +17,6 @@ find_package(Qt6 COMPONENTS
 add_subdirectory(external/libpcap EXCLUDE_FROM_ALL)
 
 add_executable(CSC677Project src/application/main.cpp
-        src/application/packet.cpp
-        src/application/packet.h
         src/application/window.cpp
         src/application/window.h
         src/application/window.ui)

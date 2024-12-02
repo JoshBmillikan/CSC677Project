@@ -30,7 +30,6 @@ private:
 
     void capturePackets(int count);
     void addPacket(const pcap_pkthdr* pktHdr, const u_char* packet);
-    bpf_u_int32 getNetMask();
 
 private slots:
     void interfaceSelected(int index);
