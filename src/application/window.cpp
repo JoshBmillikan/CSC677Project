@@ -93,7 +93,7 @@ void Window::interfaceSelected(const int index)
     bpf_u_int32 netmask, netP;
     pcap_lookupnet(name.c_str(), &netP, &netmask, errBuff);
     bpf_program program{};
-    pcap_compile(pcap, &program, "IP", 1, netmask);
+    pcap_compile(pcap, &program, "ip", 1, netmask);
     pcap_setfilter(pcap, &program);
 }
 
